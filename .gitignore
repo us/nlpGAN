@@ -3,4 +3,4 @@ virenv
 dataset/IMDB Dataset.csv
 .idea/
 __pycache__/
-pretrained_models
+models

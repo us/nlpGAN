@@ -1,4 +1,4 @@
-# SeqGan TF2 Implementation For Custom Datasets
+# SeqGan TF2 Implementation For IMBD Reviews Dataset
 
 ## Installation and Usage
 
