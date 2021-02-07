@@ -64,11 +64,12 @@ if __name__ == "__main__":
 
     if not os.path.exists(pretrained_generator_file):
         print('Start pre-training generator')
-        generator.pretrain(gen_dataset, PRE_EPOCH_NUM, generated_num // BATCH_SIZE)
+        gen_history = generator.pretrain(gen_dataset, PRE_EPOCH_NUM, generated_num // BATCH_SIZE)
         generator.save(pretrained_generator_file)
         print('Finished pre-training generator...')
     else:
         generator.load(pretrained_generator_file)
+        gen_history = generator.pretrain(gen_dataset, 1, generated_num // BATCH_SIZE)
 
     if not os.path.exists(pretrained_discriminator_file):
         print('Start pre-training discriminator...')
@@ -96,8 +97,37 @@ if __name__ == "__main__":
         for _ in range(5):
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
             dis_dataset = discriminator_dataloader(positive_file, negative_file, BATCH_SIZE)
-            discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
+            disc_history = discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
     generator.save(generator_file)
     discriminator.save(discriminator_file)
+
+    # print(history.history.keys()) # dict_keys(['loss'])
+    # generator loss
+    plt.plot(gen_history.history['loss'])
+    plt.title('Loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    # plt.show()
+    plt.savefig('generator_loss.png')
+    plt.close()
+
+    # discriminator accuracy
+    print(disc_history.history.keys())
+    plt.plot(disc_history.history['accuracy'])
+    plt.title('discriminator accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    # plt.show()
+    plt.savefig('discriminator_accuracy.png')
+    plt.close()
+
+    # discriminator loss
+    plt.plot(disc_history.history['loss'])
+    plt.title('discriminator loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    # plt.show()
+    plt.savefig('discriminator_loss.png')
+    plt.close()
 
     generator.generate_samples(generated_num // BATCH_SIZE, generated_file)
