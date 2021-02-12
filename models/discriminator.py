@@ -61,8 +61,9 @@ class Discriminator:
     def train(self, dataset, num_epochs, num_steps, **kwargs):
         history = self.d_model.fit(dataset.repeat(num_epochs), verbose=1, epochs=num_epochs, steps_per_epoch=num_steps,
                                 **kwargs)
-        self.acc_history.append(history.history['accuracy'])
-        self.loss_history.append(history.history['loss'])
+        self.acc_history.extend(history.history['accuracy'])
+        self.loss_history.extend(history.history['loss'])
+        print("history loss: ", history.history['loss'])
         return history
 
     def save(self, filename):

@@ -87,6 +87,8 @@ if __name__ == "__main__":
         discriminator.load(pretrained_discriminator_file)
     rollout = ROLLOUT(generator, 0.8)
 
+    discriminator.loss_history = []
+    discriminator.acc_history = []
     print('Start Training...')
     for epoch in range(EPOCH_NUM):
         print("Generator", epoch)
@@ -114,10 +116,12 @@ if __name__ == "__main__":
     # plt.show()
     plt.savefig('generator_loss.png')
     plt.close()
-
+    import numpy as np
     # discriminator accuracy
     # print(disc_history.history.keys())
-    plt.plot(discriminator.acc_history)
+    x = np.array(range(len(discriminator.acc_history))) / (5*3)
+    y = discriminator.acc_history
+    plt.plot(x,y)
     plt.title('discriminator accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
@@ -126,6 +130,8 @@ if __name__ == "__main__":
     plt.close()
 
     # discriminator loss
+    x = np.array(range(len(discriminator.loss_history))) / (5*3)
+    y = discriminator.loss_history
     plt.plot(discriminator.loss_history)
     plt.title('discriminator loss')
     plt.ylabel('loss')
