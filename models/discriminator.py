@@ -32,6 +32,8 @@ class Discriminator:
         self.num_classes = num_classes
         self.vocab_size = vocab_size
         self.embedding_size = embedding_size
+        self.acc_history = []
+        self.loss_history = []
 
         layer_input = Input((sequence_length,), dtype=tf.int32)
         layer_emb = Embedding(vocab_size, embedding_size,
@@ -57,8 +59,11 @@ class Discriminator:
         self.d_model.compile(optimizer=d_optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
 
     def train(self, dataset, num_epochs, num_steps, **kwargs):
-        return self.d_model.fit(dataset.repeat(num_epochs), verbose=1, epochs=num_epochs, steps_per_epoch=num_steps,
+        history = self.d_model.fit(dataset.repeat(num_epochs), verbose=1, epochs=num_epochs, steps_per_epoch=num_steps,
                                 **kwargs)
+        self.acc_history.append(history.history['accuracy'])
+        self.loss_history.append(history.history['loss'])
+        return history
 
     def save(self, filename):
         self.d_model.save_weights(filename, save_format="h5")

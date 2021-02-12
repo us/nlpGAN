@@ -57,7 +57,10 @@ if __name__ == "__main__":
                                   filter_sizes=dis_filter_sizes, num_filters=dis_num_filters,
                                   dropout_keep_prob=dis_dropout_keep_prob,
                                   l2_reg_lambda=dis_l2_reg_lambda)
-
+    print("== generator model summary ==")
+    generator.generator_model.summary()
+    print("== discriminator model summary ==")
+    discriminator.d_model.summary()
     gen_dataset = generator_dataloader(positive_file, BATCH_SIZE)
 
     if not os.path.exists("pretrained_models"):
@@ -98,7 +101,7 @@ if __name__ == "__main__":
         for _ in range(5):
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
             dis_dataset = discriminator_dataloader(positive_file, negative_file, BATCH_SIZE)
-            disc_history = discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
+            discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
     generator.save(generator_file)
     discriminator.save(discriminator_file)
 
@@ -113,8 +116,8 @@ if __name__ == "__main__":
     plt.close()
 
     # discriminator accuracy
-    print(disc_history.history.keys())
-    plt.plot(disc_history.history['accuracy'])
+    # print(disc_history.history.keys())
+    plt.plot(discriminator.acc_history)
     plt.title('discriminator accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
@@ -123,7 +126,7 @@ if __name__ == "__main__":
     plt.close()
 
     # discriminator loss
-    plt.plot(disc_history.history['loss'])
+    plt.plot(discriminator.loss_history)
     plt.title('discriminator loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
