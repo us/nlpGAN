@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Embedding, Dense, LSTM
+from tensorflow.keras.layers import Input, Embedding, Dense, GRU, LSTM
 
 
 class RNN(object):
@@ -16,8 +16,10 @@ class RNN(object):
         self.generator_model = tf.keras.models.Sequential([
             Input((self.sequence_length,), dtype=tf.int32),
             Embedding(self.num_emb, self.emb_dim, embeddings_initializer=tf.random_normal_initializer(stddev=0.1)),
-            LSTM(self.hidden_dim, kernel_initializer=tf.random_normal_initializer(stddev=0.1),
-                 recurrent_initializer=tf.random_normal_initializer(stddev=0.1), return_sequences=True),
+            GRU(self.hidden_dim, kernel_initializer=tf.random_normal_initializer(stddev=0.1),
+                recurrent_initializer=tf.random_normal_initializer(stddev=0.1), return_sequences=True),
+            #             LSTM(self.hidden_dim, kernel_initializer=tf.random_normal_initializer(stddev=0.1),
+            #                  recurrent_initializer=tf.random_normal_initializer(stddev=0.1), return_sequences=True),
             Dense(self.num_emb, kernel_initializer=tf.random_normal_initializer(stddev=0.1), activation="softmax")
         ])
         self.g_optimizer = self._create_optimizer(learning_rate, clipnorm=self.grad_clip)
@@ -54,7 +56,7 @@ class RNN(object):
             cond=lambda i, _1, _2, _3: i < self.sequence_length,
             body=_g_recurrence,
             loop_vars=(tf.constant(0, dtype=tf.int32),
-                       tf.nn.embedding_lookup(self.g_embeddings, self.start_token_vec), [h0, c0], gen_x))
+                       tf.nn.embedding_lookup(self.g_embeddings, self.start_token_vec), h0, gen_x))  # for LSTM [h0,c0]
 
         gen_x = gen_x.stack()
         outputs = tf.transpose(gen_x, perm=[1, 0])

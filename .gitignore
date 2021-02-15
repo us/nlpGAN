@@ -4,3 +4,4 @@ dataset/IMDB Dataset.csv
 .idea/
 __pycache__/
 models
+pretrained_models/

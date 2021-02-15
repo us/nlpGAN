@@ -15,7 +15,7 @@ class ROLLOUT(RNN):
     @tf.function
     def generate_one_batch(self, x_orig, given_num):
         h0 = c0 = tf.zeros([self.batch_size, self.hidden_dim])
-        h0 = [h0, c0]
+        # h0 = [h0, c0]  # for LSTM just uncomment this line
         processed_x = tf.transpose(tf.nn.embedding_lookup(self.g_embeddings, x_orig),
                                    perm=[1, 0, 2])
         gen_x = tf.TensorArray(dtype=tf.int32, size=self.sequence_length,

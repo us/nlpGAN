@@ -1,6 +1,7 @@
 import pickle
 import re
 import string
+import random
 
 import numpy as np
 import pandas as pd
@@ -73,5 +74,9 @@ if __name__ == "__main__":
     d = split_and_clean(df)
     d = tokenize(d)
 
-    np.savetxt('dataset/positives.txt', d[:generated_num], delimiter=' ', fmt='%i')
-    np.savetxt('dataset/negatives.txt', d[generated_num:(2 * generated_num)], delimiter=' ', fmt='%i')
+    positives = d[:generated_num]
+    negatives = d[generated_num:(2 * generated_num)]
+    for i in negatives:
+        random.shuffle(i)
+    np.savetxt('dataset/positives.txt', positives, delimiter=' ', fmt='%i')
+    np.savetxt('dataset/negatives.txt', negatives, delimiter=' ', fmt='%i')

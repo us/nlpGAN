@@ -1,5 +1,6 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import numpy as np
 
 import os
 from models.generator import Generator
@@ -116,7 +117,6 @@ if __name__ == "__main__":
     # plt.show()
     plt.savefig('generator_loss.png')
     plt.close()
-    import numpy as np
     # discriminator accuracy
     # print(disc_history.history.keys())
     x = np.array(range(len(discriminator.acc_history))) / (5*3)
